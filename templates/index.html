@@ -9,7 +9,14 @@
 <body>
 <!-- partial:index.partial.html -->
 <div class="container">
+
   <div class="widget">
+     <form action="{{url_for('start')}}" method="post">
+
+
+    <input type="text" placeholder="write your city and get the temp"  name="city_name">
+       <button type="submit"> search</button>
+  </form>
     <div class="details">
       <div class="temperature">{{t}}°</div>
       <div class="summary">
