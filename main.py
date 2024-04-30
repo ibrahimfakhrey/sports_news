@@ -12,15 +12,60 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
 from datetime import date, datetime
+from flask_babel import Babel
 app=Flask(__name__)
 
 END_POINT="https://api.openweathermap.org/data/2.5/weather"
 
 
 API_KEY="6ab73d57dd3ea5445996fd55de54ad44"
-data={
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-}
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Check if user is in paid_user table
+    user = User.query.get(int(user_id))
+    if user:
+        return user
+    # If not, check if user is in free_user table
+
+    # If user is not in either table, return None
+    return None
+
+app.config['SECRET_KEY'] = 'any-secret-key-you-choose'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+babel = Babel(app)
+with app.app_context():
+
+
+    class User(UserMixin, db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        phone = db.Column(db.String(100), unique=True)
+        password = db.Column(db.String(100))
+        name = db.Column(db.String(1000))
+
+
+
+
+
+
+
+    db.create_all()
+
+
+class MyModelView(ModelView):
+    def is_accessible(self):
+            return True
+
+admin = Admin(app)
+admin.add_view(MyModelView(User, db.session))
+
+data={}
 @app.route("/t",methods=["GET","POST"])
 def start():
     city_name = "banha"
