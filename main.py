@@ -96,9 +96,12 @@ def register():
     if request.method=="POST":
         user_name=request.form.get("user_name")
         password=request.form.get("password")
-        print(f" i am in post mode and i recived {user_name} and the {password}")
-        data[user_name]=password
-        print(data)
+        new_user=User(
+            phone=user_name,
+            password=password
+        )
+        db.session.add(new_user)
+        db.session.commit()
         return redirect("/login")
     return render_template("register.html")
 
@@ -107,9 +110,8 @@ def login():
     if request.method=="POST":
         user_name = request.form.get("user_name")
         password = request.form.get("password")
-        print(data)
-        print(password)
-        if user_name in data and data[user_name]==password:
+        target=User.query.filter_by(phone=user_name).first()
+        if target and target.password==password:
             return redirect("/t")
         else:
            return redirect("/register")
