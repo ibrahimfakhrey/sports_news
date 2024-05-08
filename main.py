@@ -48,6 +48,7 @@ with app.app_context():
         phone = db.Column(db.String(100), unique=True)
         password = db.Column(db.String(100))
         name = db.Column(db.String(1000))
+        role= db.Column(db.String(1000) ,default="user")
 
 
 
@@ -68,25 +69,32 @@ admin.add_view(MyModelView(User, db.session))
 data={}
 @app.route("/t",methods=["GET","POST"])
 def start():
-    city_name = "banha"
-    if request.method=="POST":
-        print("i am in post mode ")
-        city_name=request.form.get("city_name")
-        print(city_name)
-    params = {
-        'appid': API_KEY,
-        'q': city_name,  # You can also use 'q' parameter for city name
-        "units": "metric"
-    }
+    if current_user.is_authenticated and current_user.role=="user":
+        city_name = "banha"
+        if request.method=="POST":
+            print("i am in post mode ")
+            city_name=request.form.get("city_name")
+            print(city_name)
+        params = {
+            'appid': API_KEY,
+            'q': city_name,  # You can also use 'q' parameter for city name
+            "units": "metric"
+        }
 
-    response=requests.get(END_POINT,params)
-    temp=response.json()
-    temp=temp["main"]["temp"]
-    print(temp)
+        response=requests.get(END_POINT,params)
+        temp=response.json()
+        temp=temp["main"]["temp"]
+        print(temp)
 
 
 
-    return render_template("index.html",t=int(temp))
+        return render_template("index.html",t=int(temp))
+    if current_user.is_authenticated and current_user.role=="admin":
+
+        all_users=User.query.filter_by(role="user").all()
+
+        return render_template("admindash.html",all_users=all_users)
+
 
 @app.route("/")
 def s():
@@ -95,7 +103,9 @@ def s():
 def register():
     if request.method=="POST":
         user_name=request.form.get("user_name")
-        password=request.form.get("password")
+        password= generate_password_hash(request.form.get("password"), method='pbkdf2:sha256',salt_length=8
+
+            )
         new_user=User(
             phone=user_name,
             password=password
@@ -111,7 +121,8 @@ def login():
         user_name = request.form.get("user_name")
         password = request.form.get("password")
         target=User.query.filter_by(phone=user_name).first()
-        if target and target.password==password:
+        if target and check_password_hash( target.password,password):
+            login_user(target)
             return redirect("/t")
         else:
            return redirect("/register")
