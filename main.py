@@ -4,6 +4,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime, timedelta
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -11,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
-from datetime import date, datetime
+
 from flask_babel import Babel
 app=Flask(__name__)
 
@@ -41,14 +42,14 @@ db = SQLAlchemy(app)
 
 babel = Babel(app)
 with app.app_context():
-
-
     class User(UserMixin, db.Model):
         id = db.Column(db.Integer, primary_key=True)
         phone = db.Column(db.String(100), unique=True)
         password = db.Column(db.String(100))
         name = db.Column(db.String(1000))
-        role= db.Column(db.String(1000) ,default="user")
+        role = db.Column(db.String(1000), default="user")
+        last_search_time = db.Column(db.DateTime, default=datetime.utcnow)
+        search_count = db.Column(db.Integer, default=0)
 
 
 
@@ -72,28 +73,50 @@ def start():
     if current_user.is_authenticated and current_user.role=="user":
         city_name = "banha"
         if request.method=="POST":
-            print("i am in post mode ")
-            city_name=request.form.get("city_name")
-            print(city_name)
-        params = {
-            'appid': API_KEY,
-            'q': city_name,  # You can also use 'q' parameter for city name
-            "units": "metric"
-        }
+            if current_user.search_count <3:
+                current_user.search_count+=1
+                current_user.last_search_time = datetime.utcnow()
+                db.session.commit()
+                city_name=request.form.get("city_name")
+                print(city_name)
+                params = {
+                    'appid': API_KEY,
+                    'q': city_name,  # You can also use 'q' parameter for city name
+                    "units": "metric"
+                }
 
-        response=requests.get(END_POINT,params)
-        temp=response.json()
-        temp=temp["main"]["temp"]
-        print(temp)
+                response=requests.get(END_POINT,params)
+                temp=response.json()
+                temp=temp["main"]["temp"]
 
 
 
-        return render_template("index.html",t=int(temp))
+
+                return render_template("index.html",t=int(temp))
+            else:
+                time_difference = datetime.utcnow() - current_user.last_search_time
+                if time_difference > timedelta(minutes=15):
+                    current_user.search_count==0
+                    db.session.commit()
+                    return redirect("/t")
+
+                return"اصبر يا جحش "
     if current_user.is_authenticated and current_user.role=="admin":
 
         all_users=User.query.filter_by(role="user").all()
 
         return render_template("admindash.html",all_users=all_users)
+    params = {
+        'appid': API_KEY,
+        'q': city_name,  # You can also use 'q' parameter for city name
+        "units": "metric"
+    }
+
+    response = requests.get(END_POINT, params)
+    temp = response.json()
+    temp = temp["main"]["temp"]
+
+    return render_template("index.html", t=int(temp))
 
 
 @app.route("/")
