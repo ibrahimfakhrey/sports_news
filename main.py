@@ -106,22 +106,32 @@ def start():
         all_users=User.query.filter_by(role="user").all()
 
         return render_template("admindash.html",all_users=all_users)
+    city_name="banha"
     params = {
         'appid': API_KEY,
         'q': city_name,  # You can also use 'q' parameter for city name
         "units": "metric"
     }
+    today_date = datetime.utcnow().date()
+    if current_user.is_authenticated:
+        last_search_date=current_user.last_search_time.date()
+        if last_search_date < today_date:
+            current_user.search_count=0
+            db.session.commit()
 
-    response = requests.get(END_POINT, params)
-    temp = response.json()
-    temp = temp["main"]["temp"]
 
-    return render_template("index.html", t=int(temp))
+        response = requests.get(END_POINT, params)
+        temp = response.json()
+        temp = temp["main"]["temp"]
+
+        return render_template("index.html", t=int(temp))
+    else:
+        return redirect("/login")
 
 
 @app.route("/")
 def s():
-    return "home"
+    return render_template("dash.html")
 @app.route("/register",methods=["GET","POST"])
 def register():
     if request.method=="POST":
@@ -152,7 +162,10 @@ def login():
 
 
     return render_template("login.html")
-
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect("/")
 
 if __name__ =="__main__":
     app.run(debug=True)
