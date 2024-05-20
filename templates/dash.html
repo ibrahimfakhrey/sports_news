@@ -94,19 +94,24 @@
     <h2>Dashboard</h2>
     <ul>
       <li><a href="#">Home</a></li>
+      {% if current_user.is_authenticated %}
+
+         <li><a href="/t">check the weather</a></li>
+         <li><a href="/logout">logout</a></li>
+      {% else %}
       <li><a href="/login">login</a></li>
       <li><a href="/register">register</a></li>
-      <li><a href="#">Settings</a></li>
+   {% endif %}
     </ul>
   </div>
   <div class="content">
     <div class="card">
-      <h3>User Statistics</h3>
-      <p>Here are some statistics about the users:</p>
+      <h3>Welcom {{ current_user.name }}</h3>
+      <p>Here are some infos about  you :</p>
       <ul>
-        <li>Total users: 100</li>
-        <li>Active users: 80</li>
-        <li>Inactive users: 20</li>
+        <li>your phone : {{current_user.phone }}</li>
+        <li>your usage in the weather: {{current_user.search_count}}</li>
+        <li>your last_login to our website was : here are your task </li>
       </ul>
     </div>
   </div>

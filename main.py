@@ -156,12 +156,20 @@ def login():
         target=User.query.filter_by(phone=user_name).first()
         if target and check_password_hash( target.password,password):
             login_user(target)
-            return redirect("/t")
+            return redirect("/")
         else:
            return redirect("/register")
 
 
     return render_template("login.html")
+@app.route("/get_questions")
+def get_questions():
+    params={
+        "amount":10,
+        "category":21
+    }
+    response=requests.get(url="https://opentdb.com/api.php",params=params)
+    return response.json()
 @app.route("/logout")
 def logout():
     logout_user()
