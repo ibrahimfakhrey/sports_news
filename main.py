@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import requests
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -131,7 +131,7 @@ def start():
 
 @app.route("/")
 def s():
-    return render_template("dash.html")
+    return render_template("dash.html",name="ali")
 @app.route("/register",methods=["GET","POST"])
 def register():
     if request.method=="POST":
@@ -162,14 +162,48 @@ def login():
 
 
     return render_template("login.html")
+
+
 @app.route("/get_questions")
 def get_questions():
-    params={
-        "amount":10,
-        "category":21
+    params = {
+        "amount": 10,  # Adjust as needed
+        "category": 21  # Adjust category ID as needed
     }
-    response=requests.get(url="https://opentdb.com/api.php",params=params)
-    return response.json()
+    response = requests.get(url="https://opentdb.com/api.php", params=params)
+    data = response.json()
+    results = data["results"]
+
+    # Transform the data
+    quizQuestions = []
+    for item in results:
+        question = item['question']
+        correct_answer = item['correct_answer']
+        incorrect_answers = item['incorrect_answers']
+
+        # Combine correct and incorrect answers
+        all_answers = incorrect_answers + [correct_answer]
+
+        # Shuffle the answers to ensure the correct answer is not always last
+        import random
+        random.shuffle(all_answers)
+
+        # Create answers dictionary
+        answers = {chr(97 + i): answer for i, answer in enumerate(all_answers)}
+
+        # Find the key for the correct answer
+        correct_key = [key for key, value in answers.items() if value == correct_answer][0]
+
+        # Append the formatted question to the quizQuestions list
+        quizQuestions.append({
+            "question": question,
+            "answers": answers,
+            "correctAnswer": correct_key
+        })
+
+    # Print the transformed data
+    print(quizQuestions)
+    return render_template("quiz.html",quiz_questions=quizQuestions)
 @app.route("/logout")
 def logout():
     logout_user()

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quizify</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="../static/quiz.css">
+</head>
+<body>
+<div class="wrapper">
+    <h1 class="header">Quizify</h1>
+    <div class="quiz-container">
+      <div class="quiz"></div>
+    </div>
+    <div class="btn-container">
+      <button class="btn" id="prev">Prev</button>
+      <button class="btn" id="next">Next</button>
+      <button class="btn" id="submit">Submit</button>
+    </div>
+    <div class="output"></div>
+</div>
+
+<script>
+(async function() {
+  const quizContainer = document.querySelector(".quiz");
+  const outputContainer = document.querySelector(".output");
+  const nextBtn = document.querySelector("#next");
+  const prevBtn = document.querySelector("#prev");
+  const submitBtn = document.querySelector("#submit");
+
+  // Fetch the quiz questions from the Flask route
+  const response = await fetch('/get_questions');
+  const quizQuestions = await response.json();
+
+  function buildQuiz() {
+    let output = [];
+
+    quizQuestions.forEach((question, index) => {
+      let answers = [];
+
+      for (let answer in question.answers) {
+        answers.push(
+        `<label>
+            <input type='radio' name='question${index}' value='${answer}'/>
+            ${answer} : ${question.answers[answer]}
+          </label>`);
+      }
+
+      output.push(
+      `<div class='slide'>
+          <div class='questionTitle'>${index + 1}. ${question.question}</div>
+          <div class='answer'>${answers.join("")}</div>
+         </div>`);
+    });
+
+    quizContainer.innerHTML = output.join("");
+  }
+
+  function showResults() {
+    const answerContainers = document.querySelectorAll(".answer");
+    let numCorrect = 0;
+
+    quizQuestions.forEach((question, index) => {
+      const currAnswerContainer = answerContainers[index];
+      const selectedAnswer = `input[type='radio']:checked`;
+      const usersAnswer = (currAnswerContainer.querySelector(selectedAnswer) || {}).value;
+
+      if (usersAnswer === question.correctAnswer) {
+        answerContainers[index].style.color = "#8BC34A";
+        numCorrect++;
+      } else {
+        answerContainers[index].style.color = "#F44336";
+      }
+    });
+
+    outputContainer.innerHTML = `${numCorrect} out of ${quizQuestions
+.length}`;
+  }
+
+  buildQuiz();
+
+  let currentSlide = 0;
+  let slides = Array.from(document.querySelectorAll(".slide"));
+  function showSlide(n) {
+    slides[currentSlide].classList.remove("active-slide");
+    slides[n].classList.add("active-slide");
+    currentSlide = n;
+
+    if (currentSlide === 0) {
+      prevBtn.style.display = "none";
+      submitBtn.style.display = "none";
+    } else {
+      prevBtn.style.display = "inline-block";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.style.display = "none";
+      submitBtn.style.display = "inline-block";
+    } else {
+      nextBtn.style.display = "inline-block";
+      submitBtn.style.display = "none";
+    }
+  }
+  showSlide(0);
+
+  function nextSlide() {
+    showSlide(currentSlide + 1);
+  }
+
+  function prevSlide() {
+    showSlide(currentSlide - 1);
+  }
+
+  submitBtn.addEventListener("click", showResults);
+  nextBtn.addEventListener("click", nextSlide);
+  prevBtn.addEventListener("click", prevSlide);
+})();
+</script>
+
+</body>
+</html>
