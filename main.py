@@ -164,6 +164,7 @@ def login():
     return render_template("login.html")
 
 
+
 @app.route("/get_questions")
 def get_questions():
     params = {
@@ -201,9 +202,11 @@ def get_questions():
             "correctAnswer": correct_key
         })
 
-    # Print the transformed data
-    print(quizQuestions)
-    return render_template("quiz.html",quiz_questions=quizQuestions)
+    # Return the transformed data as JSON
+    return jsonify(quizQuestions)
+@app.route("/takequiz")
+def take():
+    return render_template("quiz.html")
 @app.route("/logout")
 def logout():
     logout_user()
