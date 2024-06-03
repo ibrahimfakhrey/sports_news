@@ -167,9 +167,12 @@ def login():
 
 @app.route("/get_questions")
 def get_questions():
+    amount = request.args.get('amount', default=10, type=int)  # Default to 10 if not provided
+    category = request.args.get('category', default=21, type=int)  # Default to 21 if not provided
+    print(f"i am in fetch and {amount} {category}")
     params = {
-        "amount": 10,  # Adjust as needed
-        "category": 21  # Adjust category ID as needed
+        "amount": amount,
+        "category": category
     }
     response = requests.get(url="https://opentdb.com/api.php", params=params)
     data = response.json()
@@ -201,12 +204,19 @@ def get_questions():
             "answers": answers,
             "correctAnswer": correct_key
         })
+    print(f"call hapens and here is the {quizQuestions}")
 
     # Return the transformed data as JSON
     return jsonify(quizQuestions)
-@app.route("/takequiz")
+@app.route("/takequiz",methods=["GET","POST"])
 def take():
-    return render_template("quiz.html")
+    if request.method=="POST":
+
+        amount = request.form.get('amount')
+        category = request.form.get('category')
+        print(f"i am in post mode {amount} {category} ")
+        return render_template("quiz.html",ramy=amount,mahmoud=category)
+    return render_template("get_info.html")
 @app.route("/logout")
 def logout():
     logout_user()

@@ -22,6 +22,10 @@
 
 <script>
 (async function() {
+  const amount = "{{ ramy }}";
+        const category = "{{ mahmoud }}";
+            alert("Amount: " + amount);
+    alert("Category: " + category);
   const quizContainer = document.querySelector(".quiz");
   const outputContainer = document.querySelector(".output");
   const nextBtn = document.querySelector("#next");
@@ -29,7 +33,7 @@
   const submitBtn = document.querySelector("#submit");
 
   // Fetch the quiz questions from the Flask route
-  const response = await fetch('/get_questions');
+            const response = await fetch(`/get_questions?amount=${amount}&category=${category}`);
   const quizQuestions = await response.json();
 
   function buildQuiz() {
