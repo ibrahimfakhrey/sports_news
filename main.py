@@ -52,6 +52,15 @@ with app.app_context():
         search_count = db.Column(db.Integer, default=0)
 
 
+    class Quiz(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        phone = db.Column(db.String(100))
+        taken_time = db.Column(db.DateTime, default=datetime.utcnow)
+        amount_of_questions = db.Column(db.Integer, nullable=False)
+        category = db.Column(db.String(100), nullable=False)
+        mark = db.Column(db.Float, nullable=False)
+
+
 
 
 
@@ -66,6 +75,7 @@ class MyModelView(ModelView):
 
 admin = Admin(app)
 admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(Quiz, db.session))
 
 data={}
 @app.route("/t",methods=["GET","POST"])
@@ -131,7 +141,11 @@ def start():
 
 @app.route("/")
 def s():
-    return render_template("dash.html",name="ali")
+    all_quizes=[]
+    if current_user.is_authenticated :
+        all_quizes=Quiz.query.filter_by(phone=current_user.phone).all()
+
+    return render_template("dash.html",name="ali",q=len(all_quizes))
 @app.route("/register",methods=["GET","POST"])
 def register():
     if request.method=="POST":
@@ -214,7 +228,12 @@ def take():
 
         amount = request.form.get('amount')
         category = request.form.get('category')
-        print(f"i am in post mode {amount} {category} ")
+        new_quiz=Quiz(
+            phone=current_user.phone,
+            amount_of_questions=amount,category=category,mark=0, taken_time=datetime.now()
+        )
+        db.session.add(new_quiz)
+        db.session.commit()
         return render_template("quiz.html",ramy=amount,mahmoud=category)
     return render_template("get_info.html")
 @app.route("/logout")
