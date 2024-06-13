@@ -12,7 +12,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
-
+from datetime import datetime, date, timedelta
+from sqlalchemy import and_
 from flask_babel import Babel
 app=Flask(__name__)
 
@@ -235,6 +236,20 @@ def take():
         db.session.add(new_quiz)
         db.session.commit()
         return render_template("quiz.html",ramy=amount,mahmoud=category)
+    today_start = datetime.combine(date.today(), datetime.min.time())
+    today_end = today_start + timedelta(days=1)
+
+    # Query the database
+    quizzes_today = Quiz.query.filter(
+        and_(
+            Quiz.phone == current_user.phone,
+            Quiz.taken_time >= today_start,
+            Quiz.taken_time < today_end
+        )
+    ).all()
+
+    if len(quizzes_today)> 2:
+        return "sorry you reched the limit"
     return render_template("get_info.html")
 @app.route("/logout")
 def logout():
