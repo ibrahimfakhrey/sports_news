@@ -2,19 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #235391;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #235391;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #235391;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #1e4a82;
+        }
+
+        .footer {
+            background-color: #235391;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
 </head>
 <body>
-<h1> login</h1>
 
-<form action="{{url_for('login')}}" method="post">
+    <div class="navbar">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </div>
 
+    <div class="container">
+        <h1>Login</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-    <input type="text" name="user_name" required placeholder="please write your name">
-    <input type="password" name="password" placeholder="write your password" required>
-    <button type="submit">register</button>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
 
-</form>
+            <button type="submit">Login</button>
+        </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="footer">
+        &copy; 2024 Your Website. All rights reserved.
+    </div>
 
 </body>
 </html>
