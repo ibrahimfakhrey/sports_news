@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+
+        body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input, textarea, button {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Create a New Course</h1>
+    <form action="{{ url_for('create_course') }}" method="POST" enctype="multipart/form-data">
+        <label for="name">Course Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="teacher_name">Teacher Name:</label>
+        <input type="text" id="teacher_name" name="teacher_name" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="grade">Grade:</label>
+        <input type="text" id="grade" name="grade" required>
+
+        <label for="discount">Discount:</label>
+        <input type="number" id="discount" name="discount">
+
+        <label for="sample">Sample:</label>
+        <input type="text" id="sample" name="sample">
+
+        <label for="section">Section:</label>
+        <input type="text" id="section" name="section">
+
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type">
+
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country">
+
+        <label for="online_start_time">Online Start Time:</label>
+        <input type="datetime-local" id="online_start_time" name="online_start_time">
+
+        <label for="online_end_time">Online End Time:</label>
+        <input type="datetime-local" id="online_end_time" name="online_end_time">
+
+        <label for="online_date">Online Date:</label>
+        <input type="date" id="online_date" name="online_date">
+
+        <label for="teacher_id">Teacher ID:</label>
+        <input type="number" id="teacher_id" name="teacher_id" required>
+
+        <label for="course_image">Course Image:</label>
+        <input type="file" id="course_image" name="course_image">
+
+        <button type="submit">Create Course</button>
+    </form>
+</body>
+</html>
