@@ -348,7 +348,7 @@ def dashboard():
     if current_user.role=="user":
         return "this is the userdash borad"
     if current_user.role=="teacher":
-        user_courses=Course.query.filter_by(teacher_id=1).all()
+        user_courses=Course.query.filter_by(teacher_id=current_user.id).all()
 
         return render_template("home/index.html",all_courses=user_courses)
     if current_user.role=="admin":
@@ -395,7 +395,7 @@ def create_course():
             online_start_time=online_start_time,
             online_end_time=online_end_time,
             online_date=online_date,
-            teacher_id=teacher_id
+            teacher_id=current_user.id
         )
 
         # Save course image if provided
@@ -408,7 +408,10 @@ def create_course():
         return redirect(url_for('dashboard'))  # Redirect to the course list or another relevant page
 
     return render_template('create_course.html')
-
+@app.route('/course_description/<int:course_id>')
+def course_description(course_id):
+    course = Course.query.get_or_404(course_id)
+    return render_template('course_description.html', course=course)
 
 @app.route("/logout")
 def logout():

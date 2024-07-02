@@ -206,16 +206,19 @@
             </tr>
         </thead>
         <tbody>
-            {% for course in all_courses %}
-            <tr>
-                <th scope="row">{{ course.name }}</th>
-                <td>{{ course.teacher_name }}</td>
-                <td>{{ course.description }}</td>
-                <td>{{ course.grade }}</td>
-                <td>{{ course.discount }}</td>
-                <td>{{ course.country }}</td>
-            </tr>
-            {% endfor %}
+        {% for course in all_courses %}
+<tr>
+    <th scope="row">
+        <a href="{{ url_for('course_description', course_id=course.id) }}">{{ course.name }}</a>
+    </th>
+    <td>{{ course.teacher_name }}</td>
+    <td>{{ course.description }}</td>
+    <td>{{ course.grade }}</td>
+    <td>{{ course.discount }}</td>
+    <td>{{ course.country }}</td>
+</tr>
+{% endfor %}
+
         </tbody>
     </table>            </div>
           </div>

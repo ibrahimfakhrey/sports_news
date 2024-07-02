@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Description</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+
+<h2>{{ course.name }}</h2>
+
+<p><strong>Teacher Name:</strong> {{ course.teacher_name }}</p>
+<p><strong>Description:</strong> {{ course.description }}</p>
+<p><strong>Grade:</strong> {{ course.grade }}</p>
+<p><strong>Discount:</strong> {{ course.discount }}</p>
+<p><strong>Country:</strong> {{ course.country }}</p>
+<p><strong>Sample:</strong> {{ course.sample }}</p>
+<p><strong>Section:</strong> {{ course.section }}</p>
+<p><strong>Type:</strong> {{ course.type }}</p>
+
+{% if course.course_image %}
+    <p><strong>Course Image:</strong></p>
+    <img src="{{ url_for('static', filename='uploads/' ~ course.course_image) }}" alt="{{ course.name }}" style="max-width: 100%; height: auto;">
+{% endif %}
+
+{% if course.online_start_time and course.online_end_time %}
+    <p><strong>Online Start Time:</strong> {{ course.online_start_time }}</p>
+    <p><strong>Online End Time:</strong> {{ course.online_end_time }}</p>
+{% endif %}
+
+{% if course.online_date %}
+    <p><strong>Online Date:</strong> {{ course.online_date }}</p>
+{% endif %}
+
+<a href="{{ url_for('start') }}">Back to Courses List</a>
+
+</body>
+</html>
