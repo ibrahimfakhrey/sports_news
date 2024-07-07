@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Description</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2, h3 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .video-list {
+            margin-top: 20px;
+        }
+        .video-list li {
+            margin-bottom: 10px;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            margin-bottom: 20px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>{{ lesson.title }}</h2>
+    <p>{{ lesson.content }}</p>
+
+    <h3>Upload New Video</h3>
+    <form action="" method="POST">
+        <label for="title">Video Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="link">Video Link:</label>
+        <input type="text" id="link" name="link" required>
+
+        <button type="submit">Upload Video</button>
+    </form>
+
+    <div class="video-list">
+        <h3>Videos</h3>
+        <ul>
+            {% for video in lesson.videos %}
+                <li>
+                    <div class="video-container">
+                        <iframe src="{{ video.link }}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    {{ video.title }}
+                </li>
+            {% else %}
+                <li>No videos available</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

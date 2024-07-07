@@ -412,6 +412,59 @@ def create_course():
 def course_description(course_id):
     course = Course.query.get_or_404(course_id)
     return render_template('course_description.html', course=course)
+@app.route('/create_lesson/<int:course_id>', methods=['GET', 'POST'])
+def create_lesson(course_id):
+    course = Course.query.get_or_404(course_id)
+
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        teacher_id = course.teacher_id  # Assuming the lesson is created by the course teacher
+
+        new_lesson = Lesson(
+            title=title,
+            content=content,
+            course_id=course.id,
+            teacher_id=teacher_id
+        )
+        db.session.add(new_lesson)
+        db.session.commit()
+        flash('Lesson created successfully!', 'success')
+        return redirect(url_for('course_description', course_id=course.id))
+
+    return render_template('create_lesson.html', course=course)
+@app.route('/lesson/<int:lesson_id>', methods=['GET', 'POST'])
+def lesson_description(lesson_id):
+    lesson = Lesson.query.get_or_404(lesson_id)
+
+    if request.method == 'POST':
+        title = request.form['title']
+        link = request.form['link']
+        teacher_id = lesson.teacher_id
+
+        # Transform the YouTube link to the embeddable format
+        if 'youtube.com/watch?v=' in link:
+            link = link.replace('watch?v=', 'embed/')
+        elif 'youtu.be/' in link:
+            video_id = link.split('/')[-1]
+            link = f'https://www.youtube.com/embed/{video_id}'
+
+        new_video = Video(
+            title=title,
+            link=link,
+            teacher_id=teacher_id
+        )
+        db.session.add(new_video)
+        db.session.commit()
+
+        lesson.videos.append(new_video)
+        db.session.commit()
+
+        flash('Video uploaded successfully!', 'success')
+        return redirect(url_for('lesson_description', lesson_id=lesson.id))
+
+    return render_template('lesson_description.html', lesson=lesson)
+
 
 @app.route("/logout")
 def logout():
