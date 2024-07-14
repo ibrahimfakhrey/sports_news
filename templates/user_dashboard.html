@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #23951;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+        }
+        .sidebar ul li {
+            width: 100%;
+            margin: 15px 0;
+        }
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px;
+            display: block;
+            text-align: center;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .sidebar ul li a:hover {
+            background-color: #1e7b41;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        .main-content h1 {
+            margin-top: 0;
+            font-size: 32px;
+            color: #333;
+        }
+        .main-content p {
+            font-size: 18px;
+            color: #666;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #23951;
+        }
+        .card p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="#">All Courses</a></li>
+                <li><a href="#">My Courses</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Here you can find all your courses and manage them easily.</p>
+            <div class="card">
+                <a href="/all_Courses"><h3>All Courses</h3></a>
+                <p>Browse all available courses and enroll in the ones that interest you.</p>
+            </div>
+            <div class="card">
+                <h3>My Courses</h3>
+                <p>View and manage the courses you are currently enrolled in.</p>
+            </div>
+            <!-- Add more content or cards here -->
+        </div>
+    </div>
+</body>
+</html>

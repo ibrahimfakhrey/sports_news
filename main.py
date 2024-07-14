@@ -346,7 +346,7 @@ def login():
 @login_required
 def dashboard():
     if current_user.role=="user":
-        return "this is the userdash borad"
+        return render_template("user_dashboard.html")
     if current_user.role=="teacher":
         user_courses=Course.query.filter_by(teacher_id=current_user.id).all()
 
@@ -465,6 +465,10 @@ def lesson_description(lesson_id):
 
     return render_template('lesson_description.html', lesson=lesson)
 
+@app.route("/all_courses")
+def c ():
+    all_courses=Course.query.all()
+    return render_template("all_courses.html",courses=all_courses)
 
 @app.route("/logout")
 def logout():

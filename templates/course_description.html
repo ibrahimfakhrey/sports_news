@@ -74,9 +74,13 @@
         <h3>Lessons</h3>
        <ul>
             {% for lesson in course.lessons %}
+           {% if current_user.pay %}
                 <li><a href="{{ url_for('lesson_description', lesson_id=lesson.id) }}">{{ lesson.title }}</a></li>
+
             {% else %}
-                <li>No lessons available</li>
+                                <li><a href="/pricing">{{ lesson.title }}</a></li>
+           {% endif %}
+
             {% endfor %}
         </ul>
     </div>
@@ -94,8 +98,9 @@
     {% if course.online_date %}
         <p><strong>Online Date:</strong> {{ course.online_date }}</p>
     {% endif %}
-
+{% if current_user.role=="teacher" %}
     <a href="{{ url_for('create_lesson', course_id=course.id) }}">Create Lesson</a>
+    {% endif %}
 </div>
 
 </body>

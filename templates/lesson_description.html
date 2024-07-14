@@ -73,7 +73,7 @@
 <div class="container">
     <h2>{{ lesson.title }}</h2>
     <p>{{ lesson.content }}</p>
-
+{% if current_user.role=="teacher" %}
     <h3>Upload New Video</h3>
     <form action="" method="POST">
         <label for="title">Video Title:</label>
@@ -84,6 +84,7 @@
 
         <button type="submit">Upload Video</button>
     </form>
+    {% endif %}
 
     <div class="video-list">
         <h3>Videos</h3>
