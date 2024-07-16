@@ -473,5 +473,59 @@ def c ():
 @app.route("/logout")
 def logout():
     return "ddd"
+
+@app.route("/pricing")
+def pricing():
+    return render_template("pricing.html")
+
+@app.route("/sub/<int:courses_number>")
+def sub(courses_number):
+    current_user.credit+=courses_number
+    db.session.commit()
+    return "course added successfully "
+
+@app.route('/purchase/<int:course_id>')
+@login_required
+def purchase_course(course_id):
+    course = Course.query.get_or_404(course_id)
+    user = current_user
+    if current_user.credit >0:
+        purchase = PurchaseHistory(user_id=user.id, course_id=course.id, price=course.price)
+        db.session.add(purchase)
+        current_user.credit-=1
+        db.session.commit()
+        return jsonify({"message": "Course purchased successfully!"})
+    else:
+        return jsonify({"message": " failed"})
+
+
+@app.route('/user_courses', methods=['GET'])
+@login_required
+def get_user_courses():
+    user = current_user
+    purchases = PurchaseHistory.query.filter_by(user_id=user.id).all()
+    course_ids = [purchase.course_id for purchase in purchases]
+    courses = Course.query.filter(Course.id.in_(course_ids)).all()
+
+    courses_data = []
+    for course in courses:
+        course_info = {
+            'id': course.id,
+            'name': course.name,
+            'price': course.price,
+            'description': course.description,
+            'teacher_name': course.teacher_name,
+            'grade': course.grade,
+            'section': course.section,
+            'type': course.type,
+            'country': course.country,
+            'course_image': course.course_image,
+            'online_start_time': course.online_start_time,
+            'online_end_time': course.online_end_time,
+            'online_date': course.online_date
+        }
+        courses_data.append(course_info)
+
+    return jsonify(courses_data)
 if __name__ =="__main__":
     app.run(debug=True)
